@@ -40,25 +40,22 @@ int makeitsec(int input[]) {
   return h*3600 + m*60 + s;
 }
 
-void countdown(int target) {
-  for (int i=target; i>0; i--) {
-    BeginDrawing();
-      DrawText(TextFormat("%i sec left...", i), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
-      WaitTime(1);
-      target--;
-    EndDrawing();
-  }
+// Save the stat
+void CloseThatWindow() {
+  CloseWindow();
 }
-
 
 bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
   for (int i=0; i<tomatoes; i++){
+    if (WindowShouldClose()) CloseWindow();
     for (int j=0; j<4; j++){
+      if (WindowShouldClose()) CloseWindow();
       BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
       EndDrawing();
       for (int k=PEICE; k>=0; k--) {
+        if (WindowShouldClose()) CloseWindow();
         BeginDrawing();
           ClearBackground(RAYWHITE);
           DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
@@ -72,6 +69,7 @@ bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
         DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
       EndDrawing();
       for (int k=SMALLREST; k>=0; k--) {
+        if (WindowShouldClose()) CloseWindow();
         BeginDrawing();
           ClearBackground(RAYWHITE);
           DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
@@ -86,6 +84,7 @@ bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
       DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
     EndDrawing();
     for (int k=BIGREST; k>=0; k--) {
+      if (WindowShouldClose()) CloseWindow();
       BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
@@ -95,17 +94,6 @@ bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
     }
   }
   return true;
-}
-
-void test() {
-  for (int i=0; i<10; i++) {
-    BeginDrawing();
-      ClearBackground(RAYWHITE);
-      DrawText(TextFormat("Fuck %i", i), 20, 20, 100, ORANGE);
-      WaitTime(1);
-    EndDrawing();
-  }
-  printf("FUCKYEAH\n");
 }
 
 int main(){
@@ -128,6 +116,7 @@ int main(){
   SetTargetFPS(60);
 
   while (true) {
+    if (WindowShouldClose()) CloseWindow();
     if (CheckCollisionPointRec(GetMousePosition(), textBox)) mouseOnText = true;
     else mouseOnText = false;
     if (mouseOnText) {
@@ -193,7 +182,6 @@ int main(){
       while (!WindowShouldClose()) {
         BeginDrawing();
           ClearBackground(RAYWHITE);
-          printf("SUCKER");
           DrawText("CONGRATS :D", (WIDTH/2.0f)-10, HEIGHT*0.5f, 50, RED);
         EndDrawing();
       }
