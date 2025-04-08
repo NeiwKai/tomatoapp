@@ -45,23 +45,72 @@ void CloseThatWindow() {
   CloseWindow();
 }
 
+void zawarudo(Rectangle btn) {
+  while (true) {
+    if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+      if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        break;
+      }
+    }
+    BeginDrawing();
+      DrawRectangleRec(btn, BROWN);
+    EndDrawing();
+  }
+}
+
 bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
+  bool btnstate = false;
+  Rectangle btn = {WIDTH/2.0f, HEIGHT*0.8, 50, 50};
   for (int i=0; i<tomatoes; i++){
     if (WindowShouldClose()) CloseWindow();
     for (int j=0; j<4; j++){
       if (WindowShouldClose()) CloseWindow();
       BeginDrawing();
         ClearBackground(RAYWHITE);
+        DrawRectangleRec(btn, LIGHTGRAY);
         DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
       EndDrawing();
+      // button stuff
+      if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+        printf("yes\n");
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+          printf("hah\n"); 
+          btnstate = true;
+        }
+      }
+      while(btnstate==true) {
+        if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+              btnstate = false;
+              break;
+            }
+        }
+        BeginDrawing();
+          DrawRectangleRec(btn, BROWN);
+        EndDrawing();
+      }
+      // end button stuff
       for (int k=PEICE; k>=0; k--) {
         if (WindowShouldClose()) CloseWindow();
-        BeginDrawing();
+       BeginDrawing();
           ClearBackground(RAYWHITE);
+          DrawRectangleRec(btn, LIGHTGRAY);
           DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
           DrawText(TextFormat("%i sec left...", k), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
           WaitTime(1);
         EndDrawing();
+        // button stuff
+        if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+          printf("yes\n");
+          if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            printf("hah\n"); 
+            btnstate = true;
+          }
+        }
+        if (btnstate) {
+          zawarudo(btn);
+        }
+        // end button stuff
       }
       if (j==3){ break;}
       BeginDrawing();
@@ -72,10 +121,29 @@ bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
         if (WindowShouldClose()) CloseWindow();
         BeginDrawing();
           ClearBackground(RAYWHITE);
+          DrawRectangleRec(btn, LIGHTGRAY);
           DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
           DrawText(TextFormat("%i sec left...", k), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
           WaitTime(1);
         EndDrawing();
+        // button stuff
+        if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+          if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            btnstate = true;
+          }
+        }
+        while(btnstate==true) {
+          if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+              if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                btnstate = false;
+                break;
+              }
+          }
+          BeginDrawing();
+            DrawRectangleRec(btn, BROWN);
+          EndDrawing();
+        }
+        // end button stuff
       }
     }
     if (i>=tomatoes-1){break;}
@@ -85,12 +153,31 @@ bool pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
     EndDrawing();
     for (int k=BIGREST; k>=0; k--) {
       if (WindowShouldClose()) CloseWindow();
-      BeginDrawing();
+     BeginDrawing();
         ClearBackground(RAYWHITE);
+        DrawRectangleRec(btn, LIGHTGRAY);
         DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
         DrawText(TextFormat("%i sec left...", k), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
         WaitTime(1);
       EndDrawing();
+      // button stuff
+      if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+          btnstate = true;
+        }
+      }
+      while(btnstate==true) {
+        if (CheckCollisionPointRec(GetMousePosition(), btn)) {
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+              btnstate = false;
+              break;
+            }
+        }
+        BeginDrawing();
+          DrawRectangleRec(btn, BROWN);
+        EndDrawing();
+      }
+      // end button stuff
     }
   }
   return true;
@@ -186,6 +273,6 @@ int main(){
         EndDrawing();
       }
       CloseWindow();
-    }
+  }
   return 0;
 }
