@@ -51,9 +51,8 @@ void CloseThatWindow() {
 }
 
 void zawarudo(button btn) {
-  printf("Hello bitch!\n");
   do {
-    printf("hello\n");
+    if (WindowShouldClose()) CloseWindow();
     if (CheckCollisionPointRec(GetMousePosition(), btn.rect)) {
       if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) btn.state = !btn.state;
     }
@@ -72,7 +71,7 @@ bool playpauseCheck(button btn) {
 
 void pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
   button btn;
-  btn.rect = (Rectangle) {WIDTH/2.0f, HEIGHT*0.8, 50, 50};
+  btn.rect = (Rectangle) {(WIDTH/2.0f)-25, HEIGHT*0.8, 50, 50};
   btn.state = false;
   for (int i=0; i<tomatoes; i++){
     if (WindowShouldClose()) CloseWindow();
@@ -168,18 +167,22 @@ int main(){
         switch(enterCount) {
           case 0:
             P.tomatoes = atoi(input);
+            break;
           case 1:
             peice_time = makeitint(input);
             P.PEICE = makeitsec(peice_time);
             free(peice_time);
+            break;
           case 2:
             smallrest_time = makeitint(input);
             P.SMALLREST = makeitsec(smallrest_time);
             free(smallrest_time);
+            break;
           case 3:
             bigrest_time = makeitint(input);
             P.BIGREST = makeitsec(bigrest_time);
             free(bigrest_time);
+            break;
         } 
         for (int i=0; i<maxINPUT+1; i++) {
           input[i] = '\0';
@@ -198,7 +201,20 @@ int main(){
     BeginDrawing();
       ClearBackground(RAYWHITE);
       DrawRectangleRec(textBox, LIGHTGRAY);
-      DrawText("Please Input Your time", (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, GREEN);
+      switch(enterCount) {
+        case 0:
+          DrawText("Input your tomato(loop)", (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, GREEN);
+          break;
+        case 1:
+          DrawText("Input your peice(lap) duration(H:M:S)", (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, GREEN);
+          break;
+        case 2:
+          DrawText("Input your short break duration(H:M:S)", (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, GREEN);
+          break;
+        case 3:
+          DrawText("Input your long break duration(H:M:S)", (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, GREEN);
+          break;
+      }
       DrawText(input, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
       if (mouseOnText) {
         DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, RED);
