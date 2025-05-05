@@ -14,6 +14,7 @@ typedef struct POMODORO {
   int PEICE;
   int SMALLREST;
   int BIGREST;
+  int state;
 } POMODORO;
 
 typedef struct button {
@@ -24,6 +25,45 @@ typedef struct button {
 POMODORO P;
 
 bool FINISH = false;
+
+int* makeitint(char input[]);
+int makeitsec(int input[]);
+void zawarudo(button btn);
+bool playpauseCheck(button btn);
+// state
+void getUserInput();
+void pomodoro();
+
+int main(){
+  P.state = 0;
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE); 
+  InitWindow(WIDTH, HEIGHT, "tomato");
+  SetTargetFPS(60);
+
+  while (!WindowShouldClose()) {
+    switch(P.state) {
+      case 0: {
+        getUserInput();
+        P.state++;
+        break;
+      }
+      case 1: {
+        pomodoro();
+        P.state++;
+        break;
+      }
+      case 2: {
+        BeginDrawing();
+          ClearBackground(RAYWHITE);
+          DrawText("CONGRATS :D", (WIDTH/2.0f)-10, HEIGHT*0.5f, 50, RED);
+        EndDrawing();
+        break;
+      }
+    }
+  }
+  CloseWindow(); 
+  return 0;
+}
 
 int* makeitint(char input[]){ 
   int *buffer = (int *) malloc(sizeof(int));
@@ -50,87 +90,7 @@ void CloseThatWindow() {
   CloseWindow();
 }
 
-void zawarudo(button btn) {
-  do {
-    if (WindowShouldClose()) CloseWindow();
-    if (CheckCollisionPointRec(GetMousePosition(), btn.rect)) {
-      if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) btn.state = !btn.state;
-    }
-    BeginDrawing();
-      DrawRectangleRec(btn.rect, BROWN);
-    EndDrawing();
-  } while (btn.state); 
-}
-
-bool playpauseCheck(button btn) {
-  if (CheckCollisionPointRec(GetMousePosition(), btn.rect)) {
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) btn.state = !btn.state;
-  }
-  return btn.state;
-}
-
-void pomodoro(int tomatoes, int PEICE, int SMALLREST, int BIGREST) {
-  button btn;
-  btn.rect = (Rectangle) {(WIDTH/2.0f)-25, HEIGHT*0.8, 50, 50};
-  btn.state = false;
-  for (int i=0; i<tomatoes; i++){
-    if (WindowShouldClose()) CloseWindow();
-    for (int j=0; j<4; j++){
-      if (WindowShouldClose()) CloseWindow();
-      if (playpauseCheck(btn)) zawarudo(btn);
-      BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawRectangleRec(btn.rect, LIGHTGRAY);
-        DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
-      EndDrawing();
-      for (int k=PEICE*60; k>=0; k--) {
-        if (WindowShouldClose()) CloseWindow();
-        if (playpauseCheck(btn)) zawarudo(btn);
-        BeginDrawing();
-          ClearBackground(RAYWHITE);
-          DrawRectangleRec(btn.rect, LIGHTGRAY);
-          DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
-          DrawText(TextFormat("%i sec left...", k/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
-        EndDrawing();
-      }
-      if (j==3){ break;}
-      BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
-      EndDrawing();
-      for (int k=SMALLREST*60; k>=0; k--) {
-        if (WindowShouldClose()) CloseWindow();
-        BeginDrawing();
-          ClearBackground(RAYWHITE);
-          DrawRectangleRec(btn.rect, LIGHTGRAY);
-          DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
-          DrawText(TextFormat("%i sec left...", k/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
-        EndDrawing();
-     }
-    }
-    if (i>=tomatoes-1){break;}
-    BeginDrawing();
-      ClearBackground(RAYWHITE);
-      DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
-    EndDrawing();
-    for (int k=BIGREST*60; k>=0; k--) {
-      if (WindowShouldClose()) CloseWindow();
-      BeginDrawing();
-        ClearBackground(RAYWHITE);
-        DrawRectangleRec(btn.rect, LIGHTGRAY);
-        DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
-        DrawText(TextFormat("%i sec left...", k/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
-      EndDrawing();
-   }
-  }
-}
-
-int main(){
-  //pomodoro();
-  InitWindow(WIDTH, HEIGHT, "tomato");
-
-  bool READY = false;
-  
+void getUserInput() {
   Rectangle textBox =  {(WIDTH/2.0f)-(255/2), HEIGHT*0.45f, 255, 50};
   char *input = (char *)calloc(sizeof(char), (maxINPUT+1));
 
@@ -142,10 +102,8 @@ int main(){
   int letterCount = 0;
   int enterCount = 0;
 
-  SetTargetFPS(60);
-
   while (true) {
-    if (WindowShouldClose()) CloseWindow();
+    if (WindowShouldClose()) break;
     if (CheckCollisionPointRec(GetMousePosition(), textBox)) mouseOnText = true;
     else mouseOnText = false;
     if (mouseOnText) {
@@ -191,7 +149,6 @@ int main(){
         enterCount++;
         if (enterCount >= 4) {
           free(input);
-          READY = true;
           break;
         }
       }
@@ -222,15 +179,83 @@ int main(){
         DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, DARKGRAY);
       }
     EndDrawing();
-    if (FINISH) break;
-  } 
-  pomodoro(P.tomatoes, P.PEICE, P.SMALLREST, P.BIGREST);
-  while (!WindowShouldClose()) {
+  }
+}
+
+
+void zawarudo(button btn) {
+  do {
+    if (WindowShouldClose()) CloseWindow();
+    if (CheckCollisionPointRec(GetMousePosition(), btn.rect)) {
+      if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) btn.state = !btn.state;
+    }
+    BeginDrawing();
+      DrawRectangleRec(btn.rect, BROWN);
+    EndDrawing();
+  } while (btn.state); 
+}
+
+bool playpauseCheck(button btn) {
+  if (CheckCollisionPointRec(GetMousePosition(), btn.rect)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) btn.state = !btn.state;
+  }
+  return btn.state;
+}
+
+void pomodoro() {
+  button btn;
+  btn.rect = (Rectangle) {(WIDTH/2.0f)-25, HEIGHT*0.8, 50, 50};
+  btn.state = false;
+  for (int i=0; i<P.tomatoes; i++){
+    if (WindowShouldClose()) CloseWindow();
+    for (int j=0; j<4; j++){
+      if (WindowShouldClose()) CloseWindow();
+      if (playpauseCheck(btn)) zawarudo(btn);
+      BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawRectangleRec(btn.rect, LIGHTGRAY);
+        DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, P.tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
+      EndDrawing();
+      for (int k=P.PEICE*60; k>=0; k--) {
+        if (WindowShouldClose()) CloseWindow();
+        if (playpauseCheck(btn)) zawarudo(btn);
+        BeginDrawing();
+          ClearBackground(RAYWHITE);
+          DrawRectangleRec(btn.rect, LIGHTGRAY);
+          DrawText(TextFormat("Tomato %i/%i, Peice %i/4", i+1, P.tomatoes, j+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
+          DrawText(TextFormat("%i sec left...", k/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
+        EndDrawing();
+      }
+      if (j==3){ break;}
+      BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
+      EndDrawing();
+      for (int k=P.SMALLREST*60; k>=0; k--) {
+        if (WindowShouldClose()) CloseWindow();
+        BeginDrawing();
+          ClearBackground(RAYWHITE);
+          DrawRectangleRec(btn.rect, LIGHTGRAY);
+          DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
+          DrawText(TextFormat("%i sec left...", k/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
+        EndDrawing();
+     }
+    }
+    if (i>=P.tomatoes-1){break;}
     BeginDrawing();
       ClearBackground(RAYWHITE);
-      DrawText("CONGRATS :D", (WIDTH/2.0f)-10, HEIGHT*0.5f, 50, RED);
+      DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
     EndDrawing();
+    for (int k=P.BIGREST*60; k>=0; k--) {
+      if (WindowShouldClose()) CloseWindow();
+      BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawRectangleRec(btn.rect, LIGHTGRAY);
+        DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
+        DrawText(TextFormat("%i sec left...", k/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
+      EndDrawing();
+   }
   }
-  CloseWindow(); 
-  return 0;
 }
+
+
