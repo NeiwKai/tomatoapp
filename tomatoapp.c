@@ -182,7 +182,6 @@ void getUserInput() {
   }
 }
 
-
 void zawarudo(button btn) {
   do {
     if (WindowShouldClose()) CloseWindow();
