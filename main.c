@@ -118,29 +118,29 @@ void getUserInput() {
             P.PEICE = makeitsec(peice_time);
             enterCount++;
             text = "Please input your short break duration";
-            free(peice_time);
             break;
           case 2:
             smallrest_time = makeitint(input);
             P.SMALLREST = makeitsec(smallrest_time);
             enterCount++;
             text = "Pease input your long break duration";
-            free(smallrest_time);
             break;
           case 3:
             bigrest_time = makeitint(input);
             P.BIGREST = makeitsec(bigrest_time);
             enterCount++;
-            free(bigrest_time);
             break;
         }
       }
     EndDrawing();
     if (enterCount >= 4) {
-      free(input);
       break;
     }
   }
+  free(input);
+  free(peice_time);
+  free(smallrest_time);
+  free(bigrest_time);
 }
 
 void pomodoro() {
