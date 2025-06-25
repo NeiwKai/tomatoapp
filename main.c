@@ -5,8 +5,8 @@
 #include <raylib.h>
 #include <raygui.h>
 
-#define WIDTH 800
-#define HEIGHT 600
+#define WIDTH 400
+#define HEIGHT 400
 #define maxINPUT 8
 
 typedef struct POMODORO {
@@ -35,6 +35,7 @@ void pomodoro();
 int main(){
   P.state = 0;
   SetConfigFlags(FLAG_WINDOW_RESIZABLE); 
+  SetWindowMinSize(WIDTH, HEIGHT);
   InitWindow(WIDTH, HEIGHT, "tomato");
   SetTargetFPS(60);
   char textInput[20];
@@ -54,7 +55,7 @@ int main(){
       case 2: {
         BeginDrawing();
           ClearBackground(RAYWHITE);
-          DrawText("CONGRATS :D", (WIDTH/2.0f)-10, HEIGHT*0.5f, 50, RED);
+          DrawText("CONGRATS :D", (GetScreenWidth()/2.0f)-10, GetScreenWidth()*0.5f, 50, RED);
         EndDrawing();
         break;
       }
@@ -90,7 +91,7 @@ void CloseThatWindow() {
 }
 
 void getUserInput() {
-  Rectangle textBox =  {(WIDTH/2.0f)-(255/2), HEIGHT*0.45f, 255, 50};
+  Rectangle textBox =  {(GetScreenWidth()/2.0f)-(255/2), GetScreenHeight()*0.45f, 255, 50};
   char *input = (char *)calloc(sizeof(char), (maxINPUT+1));
   char *text = (char *)calloc(sizeof(char), 255);
   text = "Please input your loop";
@@ -102,10 +103,11 @@ void getUserInput() {
   int enterCount = 0;
 
   while (!WindowShouldClose()) {
+
     BeginDrawing();
       ClearBackground(RAYWHITE);
       GuiGetStyle(DEFAULT, BACKGROUND_COLOR);
-      int result = GuiTextInputBox((Rectangle){(WIDTH/2.0f)-(255/2), HEIGHT*0.45f, 255, 255}, "Input", text, "Ok;Cancel", input, 255, NULL);
+      int result = GuiTextInputBox((Rectangle){(GetScreenWidth()/2.0f)-(255/2), GetScreenHeight()*0.5f-(255/2), 255, 255}, "Input", text, "Ok;Cancel", input, 255, NULL);
       if (result == 1) {
         switch (enterCount) {
           case 0:
@@ -156,7 +158,7 @@ void pomodoro() {
     BeginDrawing();
       ClearBackground(RAYWHITE);
       GuiGetStyle(DEFAULT, BACKGROUND_COLOR);
-      GuiToggle((Rectangle){(WIDTH/2.0f)-25, HEIGHT*0.8, 50, 50}, icon, &isPause);
+      GuiToggle((Rectangle){(GetScreenWidth()/2.0f)-25, GetScreenWidth()*0.8, 50, 50}, icon, &isPause);
       if (isPause) {
         icon = "#131#";
       } else {
@@ -164,8 +166,8 @@ void pomodoro() {
         switch (state) {
           case 0: {
             if (countdown >= 0) {
-              DrawText(TextFormat("Tomato %i/%i, Peice %i/4", loopC+1, P.tomatoes, lapC+1), (WIDTH/2.0f)-100, HEIGHT*0.3f, 20, RED); 
-              DrawText(TextFormat("%i sec left...", countdown/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
+              DrawText(TextFormat("Tomato %i/%i, Peice %i/4", loopC+1, P.tomatoes, lapC+1), (GetScreenWidth()/2.0f)-100, GetScreenWidth()*0.3f, 20, RED); 
+              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenWidth()*0.5f, 20, ORANGE); 
               countdown--;
             } else {
               if (lapC < 3) {
@@ -186,8 +188,8 @@ void pomodoro() {
           }
           case 1: {
             if (countdown >= 0) {
-              DrawText("Start small rest...", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
-              DrawText(TextFormat("%i sec left...", countdown/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
+              DrawText("Start small rest...", (GetScreenWidth()/2.0f)-20, GetScreenWidth()*0.3f, 20, RED);
+              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenWidth()*0.5f, 20, ORANGE); 
               countdown--;
             } else {
               countdown = P.PEICE*60;
@@ -197,8 +199,8 @@ void pomodoro() {
           }
           case 2: {
             if (countdown >= 0) {
-              DrawText("Start big rest :3", (WIDTH/2.0f)-20, HEIGHT*0.3f, 20, RED);
-              DrawText(TextFormat("%i sec left...", countdown/60), (WIDTH/2.0f)-50, HEIGHT*0.5f, 20, ORANGE); 
+              DrawText("Start big rest :3", (GetScreenWidth()/2.0f)-20, GetScreenWidth()*0.3f, 20, RED);
+              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenWidth()*0.5f, 20, ORANGE); 
               countdown--;
             } else {
               countdown = P.PEICE*60;
