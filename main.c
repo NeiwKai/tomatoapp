@@ -35,8 +35,8 @@ void pomodoro();
 int main(){
   P.state = 0;
   SetConfigFlags(FLAG_WINDOW_RESIZABLE); 
-  SetWindowMinSize(WIDTH, HEIGHT);
   InitWindow(WIDTH, HEIGHT, "tomato");
+  SetWindowMinSize(WIDTH, HEIGHT);
   SetTargetFPS(60);
   char textInput[20];
 
@@ -158,7 +158,7 @@ void pomodoro() {
     BeginDrawing();
       ClearBackground(RAYWHITE);
       GuiGetStyle(DEFAULT, BACKGROUND_COLOR);
-      GuiToggle((Rectangle){(GetScreenWidth()/2.0f)-25, GetScreenWidth()*0.8, 50, 50}, icon, &isPause);
+      GuiToggle((Rectangle){(GetScreenWidth()/2.0f)-25, GetScreenHeight()*0.8, 50, 50}, icon, &isPause);
       if (isPause) {
         icon = "#131#";
       } else {
@@ -166,8 +166,8 @@ void pomodoro() {
         switch (state) {
           case 0: {
             if (countdown >= 0) {
-              DrawText(TextFormat("Tomato %i/%i, Peice %i/4", loopC+1, P.tomatoes, lapC+1), (GetScreenWidth()/2.0f)-100, GetScreenWidth()*0.3f, 20, RED); 
-              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenWidth()*0.5f, 20, ORANGE); 
+              DrawText(TextFormat("Tomato %i/%i, Peice %i/4", loopC+1, P.tomatoes, lapC+1), (GetScreenWidth()/2.0f)-100, GetScreenHeight()*0.3f, 20, RED); 
+              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenHeight()*0.5f, 20, ORANGE); 
               countdown--;
             } else {
               if (lapC < 3) {
@@ -188,8 +188,8 @@ void pomodoro() {
           }
           case 1: {
             if (countdown >= 0) {
-              DrawText("Start small rest...", (GetScreenWidth()/2.0f)-20, GetScreenWidth()*0.3f, 20, RED);
-              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenWidth()*0.5f, 20, ORANGE); 
+              DrawText("Start small rest...", (GetScreenWidth()/2.0f)-20, GetScreenHeight()*0.3f, 20, RED);
+              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenHeight()*0.5f, 20, ORANGE); 
               countdown--;
             } else {
               countdown = P.PEICE*60;
@@ -199,8 +199,8 @@ void pomodoro() {
           }
           case 2: {
             if (countdown >= 0) {
-              DrawText("Start big rest :3", (GetScreenWidth()/2.0f)-20, GetScreenWidth()*0.3f, 20, RED);
-              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenWidth()*0.5f, 20, ORANGE); 
+              DrawText("Start big rest :3", (GetScreenWidth()/2.0f)-20, GetScreenHeight()*0.3f, 20, RED);
+              DrawText(TextFormat("%i sec left...", countdown/60), (GetScreenWidth()/2.0f)-50, GetScreenHeight()*0.5f, 20, ORANGE); 
               countdown--;
             } else {
               countdown = P.PEICE*60;
